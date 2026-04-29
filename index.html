@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UFC Homebase</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#0f0f0f;color:#f0f0f0;min-height:100vh;padding:20px}
+h1{text-align:center;font-size:1.5rem;color:#e8c04a;margin-bottom:4px;letter-spacing:2px;text-transform:uppercase}
+.subtitle{text-align:center;font-size:0.78rem;color:#555;margin-bottom:20px;letter-spacing:1px}
+
+/* ── Tabs ── */
+.tabs{display:flex;margin-bottom:20px;border-radius:8px;overflow:hidden;border:1px solid #2a2a2a}
+.tab{flex:1;padding:12px;text-align:center;cursor:pointer;font-size:0.88rem;font-weight:bold;background:#1a1a1a;color:#555;transition:all 0.2s;border:none;letter-spacing:0.5px}
+.tab.active-props{background:#e8c04a;color:#000}
+.tab.active-fp{background:#c084fc;color:#000}
+.tab.active-mr{background:#f97316;color:#000}
+.tab.active-model{background:#22d3ee;color:#000}
+.tab:hover:not(.active-props):not(.active-fp):not(.active-mr):not(.active-model){background:#222;color:#aaa}
+.panel{display:none}
+.panel.active{display:block}
+
+/* ── Cards ── */
+.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:16px;margin-bottom:16px}
+.card h2{font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.h-props{color:#e8c04a}
+.h-fp{color:#c084fc}
+.h-mr{color:#f97316}
+.hint{font-size:0.72rem;color:#666;margin-top:8px;line-height:1.6}
+.hint code{background:#222;color:#aaa;padding:1px 4px;border-radius:3px;font-size:0.7rem}
+
+/* ── Buttons ── */
+.btn-props{background:#e8c04a;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;width:100%;margin-top:10px;transition:background 0.2s}
+.btn-props:hover{background:#c9a030}
+.btn-fp{background:#c084fc;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;width:100%;margin-top:10px;transition:background 0.2s}
+.btn-fp:hover{background:#a855f7}
+.btn-mr{background:#f97316;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;width:100%;margin-top:10px;transition:background 0.2s}
+.btn-mr:hover{background:#ea6c08}
+.export-btn-mr{background:#f97316;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;margin-top:12px;width:100%}
+.export-btn-mr:hover{background:#ea6c08}
+.paste-area{width:100%;background:#111;border:1px solid #333;border-radius:6px;color:#f0f0f0;font-family:monospace;font-size:0.8rem;padding:10px;resize:vertical;min-height:180px}
+.paste-area:focus{outline:none;border-color:#f97316}
+.lbl-mr{color:#f97316}
+.fair-odds{color:#f97316;font-weight:bold}
+.vig{color:#888;font-size:0.75rem}
+.export-btn-props{background:#e8c04a;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;margin-top:12px;width:100%}
+.export-btn-props:hover{background:#c9a030}
+.export-btn-fp{background:#c084fc;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;margin-top:12px;width:100%}
+.export-btn-fp:hover{background:#a855f7}
+.fill-btn{background:#222;border:1px solid #333;color:#aaa;padding:4px 10px;border-radius:5px;font-size:0.75rem;cursor:pointer;transition:all 0.2s}
+.fill-btn:hover{border-color:#e8c04a;color:#e8c04a}
+.fill-btn-fp{background:#222;border:1px solid #333;color:#aaa;padding:4px 10px;border-radius:5px;font-size:0.75rem;cursor:pointer;transition:all 0.2s}
+.fill-btn-fp:hover{border-color:#c084fc;color:#c084fc}
+.fill-btns{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+/* ── Messages ── */
+.error{color:#ff6b6b;font-size:0.8rem;margin-top:8px;padding:8px;background:#2a1010;border-radius:6px}
+.warn{color:#f5a623;font-size:0.78rem;margin-top:6px;padding:8px;background:#1f1a10;border-radius:6px}
+.success{color:#4ddb7a;font-size:0.8rem;margin-top:8px;padding:8px;background:#0a2a0a;border-radius:6px}
+.file-label{display:block;background:#333;color:#ccc;border:1px dashed #555;border-radius:6px;padding:12px;text-align:center;cursor:pointer;font-size:0.82rem;margin-top:4px;transition:all 0.2s}
+.file-label:hover{border-color:#e8c04a;color:#e8c04a}
+.file-label-fp{display:block;background:#333;color:#ccc;border:1px dashed #555;border-radius:6px;padding:12px;text-align:center;cursor:pointer;font-size:0.82rem;margin-top:4px;transition:all 0.2s}
+.file-label-fp:hover{border-color:#c084fc;color:#c084fc}
+
+/* ── Tables ── */
+.tbl-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:0.8rem}
+th{background:#222;text-align:left;padding:8px 10px;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid #1e1e1e;vertical-align:middle;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#1f1f1f}
+.fighter-name{font-weight:bold;color:#f0f0f0;min-width:140px}
+.bout-sep{background:#111;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;padding:6px 10px;border-top:1px solid #2a2a2a;border-bottom:1px solid #2a2a2a}
+.bout-sep-props{color:#e8c04a}
+.bout-sep-fp{color:#c084fc}
+
+/* ── Inputs ── */
+.inp{background:#111;border:1px solid #333;border-radius:5px;color:#f0f0f0;font-size:0.82rem;padding:4px 6px;text-align:center;transition:border-color 0.2s;width:68px}
+.inp:focus{outline:none;border-color:#e8c04a}
+.inp.set{border-color:#4ddb7a;color:#4ddb7a}
+.inp.invalid{border-color:#ff6b6b}
+.inp-odds{width:62px}
+.inp-fp{background:#111;border:1px solid #333;border-radius:5px;color:#f0f0f0;font-size:0.82rem;padding:4px 6px;text-align:center;transition:border-color 0.2s;width:80px}
+.inp-fp:focus{outline:none;border-color:#c084fc}
+.inp-fp.set{border-color:#4ddb7a;color:#4ddb7a}
+.inp-fp.invalid{border-color:#ff6b6b}
+
+/* ── Misc ── */
+.uuid-ok{color:#4ddb7a;font-size:0.72rem}
+.uuid-miss{color:#555;font-size:0.72rem}
+.summary{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.sum-box{background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:8px 14px;font-size:0.78rem}
+.sum-box span{display:block;font-size:1.1rem;font-weight:bold}
+.lbl-ss{color:#e8c04a}
+.lbl-ft{color:#4a9eff}
+.lbl-td{color:#4ddb7a}
+.lbl-fp{color:#c084fc}
+.th-ss{border-bottom:2px solid #e8c04a55!important}
+.th-ft{border-bottom:2px solid #4a9eff55!important}
+.th-td{border-bottom:2px solid #4ddb7a55!important}
+</style>
+</head>
+<body>
+
+<h1>🥊 UFC Homebase</h1>
+<p class="subtitle">Underdog Fantasy · UFC Trading Tools</p>
+
+<div class="tabs">
+  <button class="tab active-props" id="tab-props" onclick="switchTab('props')">⚡ Prop Lines</button>
+  <button class="tab" id="tab-fp" onclick="switchTab('fp')">🏆 Fantasy Points</button>
+  <button class="tab" id="tab-mr" onclick="switchTab('mr')">🎯 Method &amp; Round</button>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  PANEL: PROP LINES                               -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="panel active" id="panel-props">
+
+  <!-- Step 1 -->
+  <div class="card">
+    <h2 class="h-props">Step 1 — Upload Appearance IDs CSV</h2>
+    <input type="file" id="appear-file" accept=".csv" style="display:none" onchange="handleAppearFile(event)">
+    <label for="appear-file" class="file-label">📂 Click to upload your Appearance CSV</label>
+    <div class="hint">Needs columns: <code>player_name</code>, <code>appearance_id</code>. Optional: <code>match_name</code> or <code>event_name</code> for bout grouping.</div>
+    <div id="appear-msg"></div>
+  </div>
+
+  <!-- Step 2: Model paste -->
+  <div class="card" id="model-paste-card" style="display:none">
+    <h2 class="h-props">Step 2 — Load Model Sig Strike Lines</h2>
+    <div class="hint" style="margin-bottom:10px">Go to the UFC model page, select all (Cmd+A), copy (Cmd+C), and paste below. Proj Strike lines will be auto-filled into the table.</div>
+    <textarea class="paste-area" id="model-paste" style="min-height:120px;border-color:#333" placeholder="Paste UFC model page text here..."></textarea>
+    <button class="btn-props" style="margin-top:8px" onclick="parseAndFillModel()">🧠 Load Model Lines</button>
+    <div id="model-parse-msg"></div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="card" id="lines-card" style="display:none">
+    <h2 class="h-props">Step 3 — Enter Lines &amp; Odds</h2>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px">
+      <div>
+        <div style="font-size:0.7rem;color:#e8c04a;margin-bottom:5px">⚡ Sig Strikes quick fill:</div>
+        <div class="fill-btns">
+          <button class="fill-btn" onclick="fillCol('ss',0.5)">0.5</button>
+          <button class="fill-btn" onclick="fillCol('ss',1.5)">1.5</button>
+          <button class="fill-btn" onclick="fillCol('ss',2.5)">2.5</button>
+          <button class="fill-btn" onclick="fillCol('ss',3.5)">3.5</button>
+          <button class="fill-btn" onclick="fillCol('ss','')">✕ Clear</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.7rem;color:#4a9eff;margin-bottom:5px">⏱ Fight Time quick fill:</div>
+        <div class="fill-btns">
+          <button class="fill-btn" onclick="fillCol('ft',2.5)">2.5</button>
+          <button class="fill-btn" onclick="fillCol('ft',4.5)">4.5</button>
+          <button class="fill-btn" onclick="fillCol('ft',9.5)">9.5</button>
+          <button class="fill-btn" onclick="fillCol('ft',14.5)">14.5</button>
+          <button class="fill-btn" onclick="fillCol('ft','')">✕ Clear</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.7rem;color:#4ddb7a;margin-bottom:5px">🤼 Takedowns quick fill:</div>
+        <div class="fill-btns">
+          <button class="fill-btn" onclick="fillCol('td',0.5)">0.5</button>
+          <button class="fill-btn" onclick="fillCol('td',1.5)">1.5</button>
+          <button class="fill-btn" onclick="fillCol('td',2.5)">2.5</button>
+          <button class="fill-btn" onclick="fillCol('td','')">✕ Clear</button>
+        </div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2" style="vertical-align:bottom;color:#aaa">Fighter</th>
+            <th rowspan="2" style="vertical-align:bottom;color:#aaa">App ID</th>
+            <th colspan="1" class="lbl-ss th-ss" style="text-align:center">Sig Strikes</th>
+            <th colspan="3" class="lbl-ft th-ft" style="text-align:center">Fight Time</th>
+            <th colspan="3" class="lbl-td th-td" style="text-align:center">Takedowns</th>
+          </tr>
+          <tr>
+            <th class="lbl-ss">Line</th>
+            <th class="lbl-ft">Line</th>
+            <th class="lbl-ft">Under Odds</th>
+            <th class="lbl-ft">Over Odds</th>
+            <th class="lbl-td">Line</th>
+            <th class="lbl-td">Under Odds</th>
+            <th class="lbl-td">Over Odds</th>
+          </tr>
+        </thead>
+        <tbody id="lines-tbody"></tbody>
+      </table>
+    </div>
+    <div id="lines-msg" style="margin-top:8px"></div>
+    <button class="btn-props" onclick="buildPreview()">⚡ Preview Output</button>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="card" id="preview-card" style="display:none">
+    <h2 class="h-props">📊 Preview — Upload-Ready Rows</h2>
+    <div class="summary" id="preview-summary"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="color:#aaa">Fighter</th>
+            <th style="color:#e8c04a">Stat</th>
+            <th style="color:#aaa">Line</th>
+            <th style="color:#aaa">Under Odds</th>
+            <th style="color:#aaa">Over Odds</th>
+          </tr>
+        </thead>
+        <tbody id="preview-tbody"></tbody>
+      </table>
+    </div>
+    <button class="export-btn-props" onclick="exportPropsCSV()">⬇ Download Props Upload CSV</button>
+  </div>
+
+</div><!-- /panel-props -->
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  PANEL: FANTASY POINTS                           -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="panel" id="panel-fp">
+
+  <!-- Step 1 -->
+  <div class="card">
+    <h2 class="h-fp">Step 1 — Upload Appearance IDs CSV</h2>
+    <input type="file" id="fp-appear-file" accept=".csv" style="display:none" onchange="handleFpAppearFile(event)">
+    <label for="fp-appear-file" class="file-label-fp">📂 Click to upload your Appearance CSV</label>
+    <div class="hint">Needs columns: <code>player_name</code>, <code>appearance_id</code>. Optional: <code>match_name</code> or <code>event_name</code> for bout grouping.</div>
+    <div id="fp-appear-msg"></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="card" id="fp-entry-card" style="display:none">
+    <h2 class="h-fp">Step 2 — Enter Fantasy Points</h2>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end">
+      <div>
+        <div style="font-size:0.7rem;color:#c084fc;margin-bottom:5px">🏆 Quick fill all:</div>
+        <div class="fill-btns">
+          <button class="fill-btn-fp" onclick="fillFpAll(0)">0</button>
+          <button class="fill-btn-fp" onclick="fillFpAll(10)">10</button>
+          <button class="fill-btn-fp" onclick="fillFpAll(20)">20</button>
+          <button class="fill-btn-fp" onclick="fillFpAll(30)">30</button>
+          <button class="fill-btn-fp" onclick="fillFpAll('')">✕ Clear</button>
+        </div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="color:#aaa">Fighter</th>
+            <th style="color:#aaa">App ID</th>
+            <th style="color:#c084fc">Line</th>
+            <th style="color:#c084fc">Under Odds</th>
+            <th style="color:#c084fc">Over Odds</th>
+          </tr>
+        </thead>
+        <tbody id="fp-tbody"></tbody>
+      </table>
+    </div>
+    <div id="fp-entry-msg" style="margin-top:8px"></div>
+    <button class="btn-fp" onclick="buildFpPreview()">🏆 Preview Output</button>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="card" id="fp-preview-card" style="display:none">
+    <h2 class="h-fp">📊 Preview — Fantasy Points Rows</h2>
+    <div class="summary" id="fp-preview-summary"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="color:#aaa">Fighter</th>
+            <th style="color:#aaa">Appearance ID</th>
+            <th style="color:#c084fc">Stat Name</th>
+            <th style="color:#c084fc">Points</th>
+            <th style="color:#c084fc">Under Odds</th>
+            <th style="color:#c084fc">Over Odds</th>
+          </tr>
+        </thead>
+        <tbody id="fp-preview-tbody"></tbody>
+      </table>
+    </div>
+    <button class="export-btn-fp" onclick="exportFpCSV()">⬇ Download Fantasy Points Upload CSV</button>
+  </div>
+
+</div><!-- /panel-fp -->
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  PANEL: MODEL LINES                              -->
+<!-- ════════════════════════════════════════════════ -->
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  PANEL: METHOD & ROUND DEVIG                     -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="panel" id="panel-mr">
+
+  <!-- Step 1: Paste odds -->
+  <div class="card">
+    <h2 class="h-mr">Step 1 — Paste Method &amp; Round Odds</h2>
+    <textarea class="paste-area" id="mr-paste" placeholder="Paste odds block, e.g.:
+Gilbert Burns KO/TKO &amp; Round 1
++2700
+Gilbert Burns KO/TKO &amp; Round 2
++3300
+Mike Malott Submission &amp; Round 1
++1900
+..."></textarea>
+    <div class="hint">Handles both 3-round and 5-round fights. Accepts KO/TKO and Submission. Power method devig applied per fighter group. Stat names: <code>ko_round_1</code>, <code>sub_round_2</code>, etc.</div>
+    <button class="btn-mr" onclick="parseMR()">🎯 Devig Odds</button>
+    <div id="mr-parse-msg"></div>
+  </div>
+
+  <!-- Step 2: Appearance CSV -->
+  <div class="card" id="mr-appear-card" style="display:none">
+    <h2 class="h-mr">Step 2 — Upload Appearance IDs CSV</h2>
+    <input type="file" id="mr-appear-file" accept=".csv" style="display:none" onchange="handleMRAppearFile(event)">
+    <label for="mr-appear-file" class="file-label" style="border-color:#555" onmouseover="this.style.borderColor='#f97316';this.style.color='#f97316'" onmouseout="this.style.borderColor='#555';this.style.color='#ccc'">📂 Click to upload your Appearance CSV</label>
+    <div class="hint">Needs <code>player_name</code> and <code>appearance_id</code>. Fighter names are fuzzy-matched against the pasted odds.</div>
+    <div id="mr-appear-msg"></div>
+  </div>
+
+  <!-- Step 3: Results + export -->
+  <div class="card" id="mr-results-card" style="display:none">
+    <h2 class="h-mr">📊 Fair Odds — Method &amp; Round</h2>
+    <div class="summary" id="mr-summary"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="color:#aaa">Fighter</th>
+            <th style="color:#f97316">Stat Name</th>
+            <th style="color:#aaa">Round</th>
+            <th style="color:#aaa">Market Odds</th>
+            <th style="color:#aaa">Implied %</th>
+            <th style="color:#f97316">Fair %</th>
+            <th style="color:#f97316">Fair Odds</th>
+            <th style="color:#aaa">App ID</th>
+          </tr>
+        </thead>
+        <tbody id="mr-tbody"></tbody>
+      </table>
+    </div>
+    <div id="mr-no-id-warn"></div>
+    <button class="export-btn-mr" onclick="exportMRDevig()">⬇ Download Devig CSV (reference)</button>
+    <button class="export-btn-mr" style="margin-top:6px;background:#ea6c08" onclick="exportMRUpload()">⬇ Download Upload-Ready CSV</button>
+  </div>
+
+</div><!-- /panel-mr -->
+
+<script>
+// ═══════════════════════════════════════════
+// SHARED STATE
+// ═══════════════════════════════════════════
+var fighters   = []; // props tab
+var fpFighters = []; // fantasy points tab
+
+// ═══════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('tab-props').className = 'tab' + (tab==='props' ? ' active-props' : '');
+  document.getElementById('tab-fp').className    = 'tab' + (tab==='fp'    ? ' active-fp'    : '');
+  document.getElementById('tab-mr').className    = 'tab' + (tab==='mr'    ? ' active-mr'    : '');
+}
+
+// ═══════════════════════════════════════════
+// CSV PARSER
+// ═══════════════════════════════════════════
+function parseCSV(text) {
+  var rows = [];
+  var lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+    var cols = [], cur = '', inQ = false;
+    for (var j = 0; j < line.length; j++) {
+      var c = line[j];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    cols.push(cur.trim());
+    rows.push(cols);
+  }
+  return rows;
+}
+
+function colIndex(headers, candidates) {
+  for (var i = 0; i < candidates.length; i++)
+    for (var j = 0; j < headers.length; j++)
+      if (headers[j].toLowerCase().trim() === candidates[i].toLowerCase()) return j;
+  return -1;
+}
+
+function loadFighters(text) {
+  var rows = parseCSV(text);
+  if (rows.length < 2) return null;
+  var hdr    = rows[0];
+  var iName  = colIndex(hdr, ['player_name','name','fighter','fighter_name','player']);
+  var iId    = colIndex(hdr, ['appearance_id','uuid','id','appearanceid']);
+  var iMatch = colIndex(hdr, ['match_name','event_name','bout','event','match']);
+  if (iName < 0 || iId < 0) return null;
+  var list = [];
+  for (var i = 1; i < rows.length; i++) {
+    var r = rows[i];
+    var nm = r[iName]||'', id = r[iId]||'', match = iMatch>=0?(r[iMatch]||''):'';
+    if (!nm && !id) continue;
+    list.push({ name: nm, appearance_id: id, match_name: match });
+  }
+  return list;
+}
+
+// ═══════════════════════════════════════════
+// PROPS TAB — Step 1
+// ═══════════════════════════════════════════
+function handleAppearFile(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var list = loadFighters(ev.target.result);
+    if (!list) { setMsg('appear-msg','error','Could not find player_name or appearance_id columns.'); return; }
+    if (!list.length) { setMsg('appear-msg','error','No fighter rows found.'); return; }
+    fighters = list;
+    setMsg('appear-msg','success','✅ Loaded ' + fighters.length + ' fighters.');
+    buildLinesTable();
+    document.getElementById('model-paste-card').style.display = 'block';
+    document.getElementById('lines-card').style.display = 'block';
+    document.getElementById('preview-card').style.display = 'none';
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════
+// PROPS TAB — Step 2
+// ═══════════════════════════════════════════
+function buildLinesTable() {
+  var tbody = document.getElementById('lines-tbody');
+  tbody.innerHTML = '';
+  var lastMatch = null;
+  fighters.forEach(function(f, idx) {
+    if (f.match_name && f.match_name !== lastMatch) {
+      lastMatch = f.match_name;
+      var sep = document.createElement('tr');
+      sep.innerHTML = '<td colspan="9" class="bout-sep bout-sep-props">🥊 ' + escHtml(f.match_name) + '</td>';
+      tbody.appendChild(sep);
+    }
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="fighter-name">' + escHtml(f.name) + '</td>' +
+      '<td>' + (f.appearance_id ? '<span class="uuid-ok">✓ ' + escHtml(f.appearance_id.substring(0,8)) + '…</span>' : '<span class="uuid-miss">—</span>') + '</td>' +
+      '<td><input type="number" step="0.5" min="0.5" class="inp lbl-ss" id="ss-'+idx+'" placeholder="line" oninput="markLine(this)"></td>' +
+      '<td><input type="number" step="0.5" min="0.5" class="inp lbl-ft" id="ft-'+idx+'" placeholder="line" oninput="markLine(this)"></td>' +
+      '<td><input type="number" step="1" class="inp inp-odds lbl-ft" id="ft-u-'+idx+'" placeholder="-130" oninput="markOdds(this)"></td>' +
+      '<td><input type="number" step="1" class="inp inp-odds lbl-ft" id="ft-o-'+idx+'" placeholder="110" oninput="markOdds(this)"></td>' +
+      '<td><input type="number" step="0.5" min="0.5" class="inp lbl-td" id="td-'+idx+'" placeholder="line" oninput="markLine(this)"></td>' +
+      '<td><input type="number" step="1" class="inp inp-odds lbl-td" id="td-u-'+idx+'" placeholder="-130" oninput="markOdds(this)"></td>' +
+      '<td><input type="number" step="1" class="inp inp-odds lbl-td" id="td-o-'+idx+'" placeholder="110" oninput="markOdds(this)"></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function markLine(el) {
+  var v = parseFloat(el.value);
+  el.classList.remove('set','invalid');
+  if (el.value === '') return;
+  (!isNaN(v) && v > 0 && (v*2)%1===0) ? el.classList.add('set') : el.classList.add('invalid');
+}
+
+function markOdds(el) {
+  var v = parseInt(el.value);
+  el.classList.remove('set','invalid');
+  if (el.value === '') return;
+  (!isNaN(v) && v !== 0) ? el.classList.add('set') : el.classList.add('invalid');
+}
+
+function fillCol(col, val) {
+  fighters.forEach(function(_, idx) {
+    var el = document.getElementById(col + '-' + idx);
+    if (!el) return;
+    el.value = val;
+    if (val === '') { el.classList.remove('set','invalid'); } else { markLine(el); }
+  });
+}
+
+// ═══════════════════════════════════════════
+// PROPS TAB — Step 3
+// ═══════════════════════════════════════════
+function buildPreview() {
+  var exportRows = [], warnings = [];
+  fighters.forEach(function(f, idx) {
+    if (!f.appearance_id) { warnings.push(f.name + ' (no appearance_id)'); return; }
+    var ssRaw = document.getElementById('ss-'+idx).value;
+    var ftRaw = document.getElementById('ft-'+idx).value;
+    var tdRaw = document.getElementById('td-'+idx).value;
+    var ss  = parseFloat(ssRaw),  ft  = parseFloat(ftRaw),  td  = parseFloat(tdRaw);
+    var ftU = parseInt(document.getElementById('ft-u-'+idx).value);
+    var ftO = parseInt(document.getElementById('ft-o-'+idx).value);
+    var tdU = parseInt(document.getElementById('td-u-'+idx).value);
+    var tdO = parseInt(document.getElementById('td-o-'+idx).value);
+
+    if (ssRaw !== '' && !isNaN(ss) && ss > 0)
+      exportRows.push({ name:f.name, appearance_id:f.appearance_id, stat:'significant_strikes', line:ss, under:100, over:100 });
+
+    if (ftRaw !== '') {
+      if (isNaN(ft)||ft<=0) warnings.push(f.name+' fight_time: invalid line');
+      else if (!document.getElementById('ft-u-'+idx).value||!document.getElementById('ft-o-'+idx).value||isNaN(ftU)||isNaN(ftO)) warnings.push(f.name+' fight_time: missing odds');
+      else exportRows.push({ name:f.name, appearance_id:f.appearance_id, stat:'fight_time', line:ft, under:ftU, over:ftO });
+    }
+    if (tdRaw !== '') {
+      if (isNaN(td)||td<=0) warnings.push(f.name+' takedowns: invalid line');
+      else if (!document.getElementById('td-u-'+idx).value||!document.getElementById('td-o-'+idx).value||isNaN(tdU)||isNaN(tdO)) warnings.push(f.name+' takedowns: missing odds');
+      else exportRows.push({ name:f.name, appearance_id:f.appearance_id, stat:'takedowns', line:td, under:tdU, over:tdO });
+    }
+  });
+
+  document.getElementById('lines-msg').innerHTML = warnings.length
+    ? '<div class="warn">⚠ Issues: ' + warnings.join(' | ') + '</div>' : '';
+  if (!exportRows.length) { document.getElementById('lines-msg').innerHTML += '<div class="error">No valid rows to preview.</div>'; return; }
+
+  var statColor = { significant_strikes:'#e8c04a', fight_time:'#4a9eff', takedowns:'#4ddb7a' };
+  var tbody = document.getElementById('preview-tbody');
+  tbody.innerHTML = '';
+  exportRows.forEach(function(r) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="fighter-name">' + escHtml(r.name) + '</td>' +
+      '<td style="color:'+(statColor[r.stat]||'#aaa')+';font-weight:bold">' + r.stat + '</td>' +
+      '<td style="color:#e8c04a;font-weight:bold">' + r.line + '</td>' +
+      '<td style="color:#4ddb7a">' + fmtOdds(r.under) + '</td>' +
+      '<td style="color:#4ddb7a">' + fmtOdds(r.over) + '</td>';
+    tbody.appendChild(tr);
+  });
+
+  var ssN = exportRows.filter(function(r){return r.stat==='significant_strikes';}).length;
+  var ftN = exportRows.filter(function(r){return r.stat==='fight_time';}).length;
+  var tdN = exportRows.filter(function(r){return r.stat==='takedowns';}).length;
+  document.getElementById('preview-summary').innerHTML =
+    '<div class="sum-box"><span style="color:#e8c04a">'+exportRows.length+'</span>Total Rows</div>'+
+    '<div class="sum-box"><span style="color:#e8c04a">'+ssN+'</span>Sig Strikes</div>'+
+    '<div class="sum-box"><span style="color:#4a9eff">'+ftN+'</span>Fight Time</div>'+
+    '<div class="sum-box"><span style="color:#4ddb7a">'+tdN+'</span>Takedowns</div>';
+
+  window._propsExportRows = exportRows;
+  document.getElementById('preview-card').style.display = 'block';
+}
+
+function exportPropsCSV() {
+  var rows = window._propsExportRows || []; if (!rows.length) return;
+  var lines = ['appearance_id,stat_name,stat_value,under_american_odds,over_american_odds'];
+  rows.forEach(function(r){ lines.push([csvEsc(r.appearance_id), r.stat, r.line, r.under, r.over].join(',')); });
+  dlCSV(lines.join('\n'), 'ufc_props_upload.csv');
+}
+
+// ═══════════════════════════════════════════
+// FANTASY POINTS TAB — Step 1
+// ═══════════════════════════════════════════
+function handleFpAppearFile(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var list = loadFighters(ev.target.result);
+    if (!list) { setMsg('fp-appear-msg','error','Could not find player_name or appearance_id columns.'); return; }
+    if (!list.length) { setMsg('fp-appear-msg','error','No fighter rows found.'); return; }
+    fpFighters = list;
+    setMsg('fp-appear-msg','success','✅ Loaded ' + fpFighters.length + ' fighters.');
+    buildFpTable();
+    document.getElementById('fp-entry-card').style.display = 'block';
+    document.getElementById('fp-preview-card').style.display = 'none';
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════
+// FANTASY POINTS TAB — Step 2
+// ═══════════════════════════════════════════
+function buildFpTable() {
+  var tbody = document.getElementById('fp-tbody');
+  tbody.innerHTML = '';
+  var lastMatch = null;
+  fpFighters.forEach(function(f, idx) {
+    if (f.match_name && f.match_name !== lastMatch) {
+      lastMatch = f.match_name;
+      var sep = document.createElement('tr');
+      sep.innerHTML = '<td colspan="5" class="bout-sep bout-sep-fp">🥊 ' + escHtml(f.match_name) + '</td>';
+      tbody.appendChild(sep);
+    }
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="fighter-name">' + escHtml(f.name) + '</td>' +
+      '<td>' + (f.appearance_id ? '<span class="uuid-ok">✓ ' + escHtml(f.appearance_id.substring(0,8)) + '…</span>' : '<span class="uuid-miss">—</span>') + '</td>' +
+      '<td><input type="number" step="0.01" class="inp-fp lbl-fp" id="fp-'+idx+'" placeholder="e.g. 32.5" oninput="markFp(this)"></td>' +
+      '<td><input type="number" step="1" class="inp-fp lbl-fp" id="fp-u-'+idx+'" placeholder="-130" oninput="markFpOdds(this)"></td>' +
+      '<td><input type="number" step="1" class="inp-fp lbl-fp" id="fp-o-'+idx+'" placeholder="110" oninput="markFpOdds(this)"></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function markFp(el) {
+  var v = parseFloat(el.value);
+  el.classList.remove('set','invalid');
+  if (el.value === '') return;
+  (!isNaN(v) && v >= 0) ? el.classList.add('set') : el.classList.add('invalid');
+}
+
+function markFpOdds(el) {
+  var v = parseInt(el.value);
+  el.classList.remove('set','invalid');
+  if (el.value === '') return;
+  (!isNaN(v) && v !== 0) ? el.classList.add('set') : el.classList.add('invalid');
+}
+
+function fillFpAll(val) {
+  fpFighters.forEach(function(_, idx) {
+    var el = document.getElementById('fp-' + idx);
+    if (!el) return;
+    el.value = val;
+    if (val === '') { el.classList.remove('set','invalid'); } else { markFp(el); }
+  });
+}
+
+// ═══════════════════════════════════════════
+// FANTASY POINTS TAB — Step 3
+// ═══════════════════════════════════════════
+function buildFpPreview() {
+  var exportRows = [], skipped = [], noId = [];
+  fpFighters.forEach(function(f, idx) {
+    if (!f.appearance_id) { noId.push(f.name); return; }
+    var el = document.getElementById('fp-' + idx);
+    var elU = document.getElementById('fp-u-' + idx);
+    var elO = document.getElementById('fp-o-' + idx);
+    if (!el || el.value === '') { skipped.push(f.name); return; }
+    var v  = parseFloat(el.value);
+    var vU = parseInt(elU.value);
+    var vO = parseInt(elO.value);
+    if (isNaN(v) || v < 0) { skipped.push(f.name + ' (invalid points)'); return; }
+    if (!elU.value || !elO.value || isNaN(vU) || isNaN(vO)) { skipped.push(f.name + ' (missing odds)'); return; }
+    exportRows.push({ name: f.name, appearance_id: f.appearance_id, points: v, under: vU, over: vO });
+  });
+
+  var msg = '';
+  if (skipped.length) msg += '<div class="warn">⚠ Skipped (no points entered): ' + skipped.join(', ') + '</div>';
+  if (noId.length)    msg += '<div class="warn">⚠ Skipped (no appearance_id): ' + noId.join(', ') + '</div>';
+  document.getElementById('fp-entry-msg').innerHTML = msg;
+
+  if (!exportRows.length) { document.getElementById('fp-entry-msg').innerHTML += '<div class="error">No valid rows to preview.</div>'; return; }
+
+  var tbody = document.getElementById('fp-preview-tbody');
+  tbody.innerHTML = '';
+  exportRows.forEach(function(r) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="fighter-name">' + escHtml(r.name) + '</td>' +
+      '<td style="font-family:monospace;font-size:0.75rem;color:#666">' + escHtml(r.appearance_id) + '</td>' +
+      '<td style="color:#c084fc;font-weight:bold">fantasy_points</td>' +
+      '<td style="color:#e8c04a;font-weight:bold">' + r.points + '</td>' +
+      '<td style="color:#4ddb7a">' + fmtOdds(r.under) + '</td>' +
+      '<td style="color:#4ddb7a">' + fmtOdds(r.over) + '</td>';
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('fp-preview-summary').innerHTML =
+    '<div class="sum-box"><span style="color:#c084fc">'+exportRows.length+'</span>Fighters</div>'+
+    '<div class="sum-box"><span style="color:#888">'+skipped.length+'</span>Skipped</div>'+
+    '<div class="sum-box"><span style="color:#e8c04a">'+(exportRows.reduce(function(a,r){return a+r.points;},0)/exportRows.length).toFixed(1)+'</span>Avg Pts</div>';
+
+  window._fpExportRows = exportRows;
+  document.getElementById('fp-preview-card').style.display = 'block';
+}
+
+function exportFpCSV() {
+  var rows = window._fpExportRows || []; if (!rows.length) return;
+  var lines = ['appearance_id,stat_name,stat_value,under_american_odds,over_american_odds'];
+  rows.forEach(function(r){ lines.push([csvEsc(r.appearance_id), 'fantasy_points', r.points, r.under, r.over].join(',')); });
+  dlCSV(lines.join('\n'), 'ufc_fantasy_points_upload.csv');
+}
+
+// ═══════════════════════════════════════════
+// METHOD & ROUND TAB
+// ═══════════════════════════════════════════
+
+var mrFighters = []; // appearance CSV for MR tab
+var mrResults  = []; // parsed + deviggged combos
+
+function mrStatName(method, round) {
+  var m = method.toUpperCase();
+  var prefix = (m.indexOf('KO') >= 0 || m.indexOf('TKO') >= 0) ? 'ko' : 'sub';
+  return prefix + '_round_' + round;
+}
+
+function americanToProb(odds) {
+  if (odds > 0) return 100 / (odds + 100);
+  return Math.abs(odds) / (Math.abs(odds) + 100);
+}
+
+function probToAmerican(p) {
+  if (p <= 0 || p >= 1) return null;
+  if (p >= 0.5) return -Math.round((p / (1 - p)) * 100);
+  return Math.round((100 / p) - 100);
+}
+
+// Single-side vig removal: fair_prob = implied_prob / (1 + vig_decimal)
+var MR_VIG = 0.10;
+
+function singleSideDevig(odds) {
+  var implied = americanToProb(odds);
+  var fair = implied / (1 + MR_VIG);
+  return { fairPct: fair, fairOdds: probToAmerican(fair) };
+}
+
+// Fuzzy name match: normalize and check if one contains the other
+function fuzzyMatch(a, b) {
+  var na = a.toLowerCase().replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim();
+  var nb = b.toLowerCase().replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim();
+  return na === nb || na.indexOf(nb) >= 0 || nb.indexOf(na) >= 0;
+}
+
+function findAppearanceId(fighterName) {
+  for (var i = 0; i < mrFighters.length; i++) {
+    if (fuzzyMatch(mrFighters[i].name, fighterName)) return mrFighters[i].appearance_id;
+  }
+  return null;
+}
+
+function parseMR() {
+  var raw = document.getElementById('mr-paste').value.trim();
+  if (!raw) { setMsg('mr-parse-msg','error','Nothing pasted.'); return; }
+
+  var lines = raw.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l; });
+
+  var entries = [];
+  var i = 0;
+  while (i < lines.length) {
+    var label = lines[i];
+    var oddsStr = (lines[i+1] || '').replace(/[^\d+\-]/g,'');
+    var oddsMatch = (lines[i+1] || '').match(/^([+\-]?\d+)/);
+    if (!oddsMatch) { i++; continue; }
+    var oddsVal = parseInt(oddsMatch[1]);
+
+    // Match: "Fighter Name KO/TKO & Round N" or "Fighter Name Submission & Round N"
+    var m = label.match(/^(.+?)\s+(KO\/TKO|Submission)\s*[&+]\s*Round\s*(\d+)$/i);
+    if (m) {
+      entries.push({ fighter: m[1].trim(), method: m[2].trim(), round: parseInt(m[3]), odds: oddsVal });
+    }
+    i += 2;
+  }
+
+  if (!entries.length) {
+    setMsg('mr-parse-msg','error','Could not parse any lines. Expected: "Fighter KO/TKO & Round 1" then "+2700".');
+    return;
+  }
+
+  // Devig each combo independently
+  var groups = {};
+  entries.forEach(function(e) {
+    if (!groups[e.fighter]) groups[e.fighter] = [];
+    groups[e.fighter].push(e);
+  });
+
+  mrResults = [];
+  Object.keys(groups).forEach(function(fighter) {
+    var group = groups[fighter];
+    group.forEach(function(e) {
+      var dv = singleSideDevig(e.odds);
+      mrResults.push({
+        fighter:       e.fighter,
+        method:        e.method,
+        round:         e.round,
+        statName:      mrStatName(e.method, e.round),
+        odds:          e.odds,
+        impliedPct:    americanToProb(e.odds),
+        fairPct:       dv.fairPct,
+        fairOdds:      dv.fairOdds,
+        vig:           MR_VIG,
+        appearance_id: findAppearanceId(e.fighter)
+      });
+    });
+  });
+
+  renderMRTable();
+  setMsg('mr-parse-msg','success','✅ Parsed ' + mrResults.length + ' combos across ' + Object.keys(groups).length + ' fighter(s).');
+  document.getElementById('mr-appear-card').style.display = 'block';
+  document.getElementById('mr-results-card').style.display = 'block';
+}
+
+function handleMRAppearFile(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var list = loadFighters(ev.target.result);
+    if (!list || !list.length) { setMsg('mr-appear-msg','error','Could not load fighters from CSV.'); return; }
+    mrFighters = list;
+    // Re-attach appearance IDs to existing results
+    mrResults.forEach(function(r) {
+      r.appearance_id = findAppearanceId(r.fighter);
+    });
+    var matched = mrResults.filter(function(r){ return r.appearance_id; }).length;
+    var total   = mrResults.length;
+    setMsg('mr-appear-msg','success','✅ Loaded ' + list.length + ' fighters. Matched ' + matched + '/' + total + ' combos.');
+    renderMRTable();
+  };
+  reader.readAsText(file);
+}
+
+function renderMRTable() {
+  var tbody = document.getElementById('mr-tbody');
+  tbody.innerHTML = '';
+  var lastFighter = null;
+  var noId = [];
+
+  mrResults.forEach(function(r) {
+    if (r.fighter !== lastFighter) {
+      lastFighter = r.fighter;
+      var vig = ((r.vig - 1) * 100).toFixed(1);
+      var sep = document.createElement('tr');
+      sep.innerHTML = '<td colspan="8" class="bout-sep" style="color:#f97316">🎯 ' + escHtml(r.fighter) + '</td>';
+      tbody.appendChild(sep);
+    }
+    if (!r.appearance_id) noId.push(r.fighter);
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="fighter-name">' + escHtml(r.fighter) + '</td>' +
+      '<td style="color:#f97316;font-family:monospace;font-size:0.75rem">' + r.statName + '</td>' +
+      '<td style="color:#aaa">R' + r.round + '</td>' +
+      '<td style="color:#888">' + fmtOdds(r.odds) + '</td>' +
+      '<td style="color:#888">' + (r.impliedPct*100).toFixed(2) + '%</td>' +
+      '<td class="fair-odds">' + (r.fairPct*100).toFixed(2) + '%</td>' +
+      '<td class="fair-odds">' + (r.fairOdds !== null ? fmtOdds(r.fairOdds) : '—') + '</td>' +
+      '<td>' + (r.appearance_id
+        ? '<span class="uuid-ok">✓ ' + escHtml(r.appearance_id.substring(0,8)) + '…</span>'
+        : '<span class="uuid-miss">—</span>') + '</td>';
+    tbody.appendChild(tr);
+  });
+
+  // Unique fighters for vig summary
+  var seen = {}, vigSummary = [];
+  mrResults.forEach(function(r){
+    if (!seen[r.fighter]) { seen[r.fighter]=true; vigSummary.push(r); }
+  });
+  document.getElementById('mr-summary').innerHTML =
+    '<div class="sum-box"><span style="color:#f97316">' + mrResults.length + '</span>Combos</div>' +
+    '<div class="sum-box"><span style="color:#f97316">' + vigSummary.length + '</span>Fighters</div>' +
+    '<div class="sum-box"><span style="color:#888">' + (MR_VIG*100).toFixed(0) + '%</span>Vig Assumed</div>';
+
+  // Warn about unmatched fighters
+  var uniqueNoId = noId.filter(function(v,i,a){return a.indexOf(v)===i;});
+  document.getElementById('mr-no-id-warn').innerHTML = uniqueNoId.length
+    ? '<div class="warn" style="margin-top:8px">⚠ No appearance_id matched for: ' + uniqueNoId.join(', ') + '. Upload an Appearance CSV above to match.</div>'
+    : '';
+}
+
+// Reference devig CSV (all columns, no upload format)
+function exportMRDevig() {
+  if (!mrResults.length) return;
+  var lines = ['fighter,method,round,stat_name,market_odds,implied_pct,fair_pct,fair_odds,appearance_id'];
+  mrResults.forEach(function(r) {
+    lines.push([
+      csvEsc(r.fighter), csvEsc(r.method), r.round, r.statName,
+      r.odds,
+      (r.impliedPct*100).toFixed(4),
+      (r.fairPct*100).toFixed(4),
+      r.fairOdds !== null ? r.fairOdds : '',
+      csvEsc(r.appearance_id || '')
+    ].join(','));
+  });
+  dlCSV(lines.join('\n'), 'ufc_method_round_devig.csv');
+}
+
+// Upload-ready CSV: one row per combo, fair odds as the american odds columns
+function exportMRUpload() {
+  var uploadRows = mrResults.filter(function(r){ return r.appearance_id && r.fairOdds !== null; });
+  if (!uploadRows.length) {
+    alert('No rows with both appearance_id and valid fair odds. Upload an Appearance CSV first.');
+    return;
+  }
+  var skipped = mrResults.length - uploadRows.length;
+  var lines = ['appearance_id,stat_name,stat_value,over_american_odds'];
+  uploadRows.forEach(function(r) {
+    lines.push([
+      csvEsc(r.appearance_id),
+      r.statName,
+      0.5,
+      r.fairOdds !== null ? r.fairOdds : ''
+    ].join(','));
+  });
+  if (skipped > 0) alert(skipped + ' row(s) skipped (missing appearance_id or fair odds).');
+  dlCSV(lines.join('\n'), 'ufc_method_round_upload.csv');
+}
+
+
+
+function fmtOdds(n) { return n > 0 ? '+' + n : String(n); }
+
+function dlCSV(content, filename) {
+  var blob = new Blob([content], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function setMsg(id, type, text) {
+  var el = document.getElementById(id);
+  if (el) el.innerHTML = '<div class="'+(type==='error'?'error':'success')+'">'+text+'</div>';
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function csvEsc(s) {
+  s = String(s);
+  if (s.includes(',') || s.includes('"') || s.includes('\n')) return '"' + s.replace(/"/g,'""') + '"';
+  return s;
+}
+// ═══════════════════════════════════════════
+// MODEL PASTE → AUTO-FILL SIG STRIKES
+// ═══════════════════════════════════════════
+function parseAndFillModel() {
+  var raw = document.getElementById('model-paste').value.trim();
+  if (!raw) { setMsg('model-parse-msg','error','Nothing pasted.'); return; }
+  if (!fighters.length) { setMsg('model-parse-msg','error','Upload appearance CSV first.'); return; }
+
+  var lines = raw.split('\n').map(function(l){ return l.trim(); });
+  var results = []; // {fighter, proj}
+
+  var currentFight = null;
+  var sigSection   = false;
+  var headers      = [];
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+
+    // Fight header
+    if (/vs.*\|.*ML:/i.test(line)) {
+      currentFight = line.replace(/\s*\|.*$/, '').trim();
+      sigSection   = false;
+      headers      = [];
+      continue;
+    }
+
+    // Sig Strikes section
+    if (/^Sig Strikes/i.test(line)) { sigSection = true; headers = []; continue; }
+
+    // Reset on new section
+    if (/^Method Props|^Round Props/i.test(line)) { sigSection = false; continue; }
+
+    if (!sigSection) continue;
+
+    // Header row with fighter names: "Prop  Fighter A (O/U)  Fighter B (O/U)"
+    if (/\(O\/U\)/i.test(line) || /^Prop\s/i.test(line)) {
+      // Strip "Prop" prefix, then extract fighter names by splitting on (O/U) boundaries
+      var stripped = line.replace(/^Prop\s*/i, '');
+      // Extract everything before each "(O/U)" as a fighter name
+      var nameMatches = stripped.match(/([^\t(]+)\s*\(O\/U\)/gi);
+      if (nameMatches) {
+        headers = nameMatches.map(function(m){ return m.replace(/\s*\(O\/U\)/i,'').trim(); });
+      } else {
+        var parts = stripped.split(/\t|\s{2,}/).map(function(p){ return p.replace(/\s*\(O\/U\)/i,'').trim(); }).filter(Boolean);
+        headers = parts;
+      }
+      continue;
+    }
+
+    // Proj Strikes row
+    if (/^Proj Strikes/i.test(line)) {
+      // Remove "Proj Strikes" prefix then split remaining by whitespace
+      var rest = line.replace(/^Proj Strikes\s*/i, '').trim();
+      // Values are space-separated numbers or —
+      var vals = rest.split(/\s+/).map(function(p){ return p.trim(); }).filter(Boolean);
+      vals.forEach(function(v, idx) {
+        var num = parseFloat(v);
+        if (isNaN(num) || v === '—') return;
+        var name = headers[idx] || '';
+        if (name) results.push({ fighter: name, proj: num });
+      });
+      sigSection = false;
+      continue;
+    }
+  }
+
+  if (!results.length) {
+    setMsg('model-parse-msg','error','No Proj Strikes found. Make sure the model has loaded data for the fights.');
+    return;
+  }
+
+  // Fill sig strike inputs
+  var filled = 0, skipped = [];
+  results.forEach(function(r) {
+    var idx = -1;
+    for (var i = 0; i < fighters.length; i++) {
+      if (fuzzyMatch(fighters[i].name, r.fighter)) { idx = i; break; }
+    }
+    if (idx < 0) { skipped.push(r.fighter); return; }
+    var el = document.getElementById('ss-' + idx);
+    if (el) { el.value = r.proj; markLine(el); filled++; }
+  });
+
+  var msg = '✅ Filled ' + filled + ' sig strike lines.';
+  if (skipped.length) msg += ' Could not match: ' + skipped.join(', ');
+  setMsg('model-parse-msg', filled > 0 ? 'success' : 'error', msg);
+}
+
+
+
+</script>
+
+</body>
+</html>
