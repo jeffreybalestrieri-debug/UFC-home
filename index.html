@@ -121,6 +121,45 @@ tr:hover td{background:#1f1f1f}
 .th-ss{border-bottom:2px solid #e8c04a55!important}
 .th-ft{border-bottom:2px solid #4a9eff55!important}
 .th-td{border-bottom:2px solid #4ddb7a55!important}
+
+/* ── UFC Model tab ── */
+.h-model{color:#22d3ee}
+.btn-model{background:#22d3ee;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;width:100%;margin-top:10px;transition:background 0.2s}
+.btn-model:hover{background:#06b6d4}
+.btn-model-sm{background:#22d3ee;color:#000;border:none;padding:6px 14px;border-radius:5px;font-weight:bold;font-size:0.8rem;cursor:pointer;transition:background 0.2s}
+.btn-model-sm:hover{background:#06b6d4}
+.model-sub-tabs{display:flex;gap:0;margin-bottom:16px;border-radius:6px;overflow:hidden;border:1px solid #2a2a2a}
+.model-sub-tab{flex:1;padding:9px;text-align:center;cursor:pointer;font-size:0.84rem;font-weight:bold;background:#1a1a1a;color:#555;border:none;transition:all 0.2s}
+.model-sub-tab.active{background:#22d3ee;color:#000}
+.model-sub-tab:hover:not(.active){background:#222;color:#aaa}
+.cp-fight{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;margin-bottom:10px;overflow:hidden}
+.cp-fight-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;transition:background 0.15s}
+.cp-fight-hdr:hover{background:#1f1f1f}
+.cp-fight-body{padding:12px 16px;border-top:1px solid #2a2a2a}
+.cp-fname{font-weight:bold;color:#f0f0f0;font-size:0.88rem}
+.cp-vs{color:#444;font-size:0.8rem;margin:0 6px}
+.cp-wc{font-size:0.7rem;color:#555;background:#111;padding:2px 8px;border-radius:10px}
+.cp-section{margin-bottom:14px}
+.cp-section:last-child{margin-bottom:0}
+.cp-section-title{font-size:0.7rem;color:#22d3ee;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:bold}
+.cp-tbl{width:auto;font-size:0.8rem;border-collapse:collapse}
+.cp-tbl th{background:#111;padding:5px 12px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.5px;color:#666;white-space:nowrap}
+.cp-tbl td{padding:5px 12px;border-bottom:1px solid #1a1a1a;white-space:nowrap}
+.cp-tbl tr:last-child td{border-bottom:none}
+.cp-fair{color:#22d3ee;font-weight:bold}
+.mb-inp{background:#111;border:1px solid #333;border-radius:5px;color:#f0f0f0;font-size:0.82rem;padding:6px 8px;width:100%;transition:border-color 0.2s}
+.mb-inp:focus{outline:none;border-color:#22d3ee}
+.mb-inp-sm{background:#111;border:1px solid #333;border-radius:5px;color:#f0f0f0;font-size:0.82rem;padding:5px 8px;width:100%;transition:border-color 0.2s}
+.mb-inp-sm:focus{outline:none;border-color:#22d3ee}
+.mb-lbl{font-size:0.7rem;color:#22d3ee;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.mb-lbl-dim{font-size:0.7rem;color:#555;margin-bottom:4px}
+.mb-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.mb-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.mb-win-box{text-align:center;background:#111;border:1px solid #22d3ee22;border-radius:8px;padding:14px 10px}
+.mb-win-name{font-size:0.7rem;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mb-win-pct{font-size:1.8rem;font-weight:bold;color:#22d3ee}
+.mb-win-odds{font-size:0.82rem;color:#888;margin-top:2px}
+.mb-card-lbl{font-size:0.7rem;color:#22d3ee;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:bold}
 </style>
 </head>
 <body>
@@ -134,6 +173,7 @@ tr:hover td{background:#1f1f1f}
   <button class="tab" id="tab-mr" onclick="switchTab('mr')">🎯 Method &amp; Round</button>
   <button class="tab" id="tab-oj" onclick="switchTab('oj')">🔎 OJ Scraper</button>
   <button class="tab" id="tab-ss" onclick="switchTab('ss')">🥊 Sig Strike Alts</button>
+  <button class="tab" id="tab-model" onclick="switchTab('model')">📊 UFC Model</button>
 </div>
 
 <!-- ════════════════════════════════════════════════ -->
@@ -505,12 +545,164 @@ Mike Malott Submission &amp; Round 1
 
 </div><!-- /panel-ss -->
 
+<!-- ════════════════════════════════════════════════ -->
+<!--  PANEL: UFC MODEL                                -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="panel" id="panel-model">
+
+  <!-- Sub-tab nav -->
+  <div class="model-sub-tabs">
+    <button class="model-sub-tab active" id="msub-cp" onclick="switchModelTab('cp')">📋 Card Props</button>
+    <button class="model-sub-tab" id="msub-mb" onclick="switchModelTab('mb')">🥊 Matchup Builder</button>
+  </div>
+
+  <!-- ── Card Props ── -->
+  <div id="model-panel-cp">
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
+      <h2 class="h-model" style="margin:0">Card Props</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="cp-status" style="font-size:0.8rem"></div>
+        <button class="btn-model-sm" onclick="cpLoad()">🔄 Refresh</button>
+      </div>
+    </div>
+    <div id="cp-content"></div>
+  </div>
+
+  <!-- ── Matchup Builder ── -->
+  <div id="model-panel-mb" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start">
+
+      <!-- Left: inputs + results -->
+      <div>
+        <div class="card">
+          <h2 class="h-model">Matchup Builder</h2>
+          <div id="mb-status" style="margin-bottom:10px;font-size:0.8rem"></div>
+          <datalist id="mb-fighters-list"></datalist>
+
+          <div class="mb-grid2">
+            <div>
+              <div class="mb-lbl">Fighter A</div>
+              <input class="mb-inp" id="mb-fighter-a" list="mb-fighters-list" placeholder="Type name…" autocomplete="off">
+            </div>
+            <div>
+              <div class="mb-lbl">Fighter B</div>
+              <input class="mb-inp" id="mb-fighter-b" list="mb-fighters-list" placeholder="Type name…" autocomplete="off">
+            </div>
+          </div>
+
+          <div style="margin-bottom:12px">
+            <div class="mb-lbl">Weight Class</div>
+            <select class="mb-inp" id="mb-weight-class">
+              <option>Lightweight</option>
+              <option>Welterweight</option>
+              <option>Middleweight</option>
+              <option>Light Heavyweight</option>
+              <option>Heavyweight</option>
+              <option>Featherweight</option>
+              <option>Bantamweight</option>
+              <option>Flyweight</option>
+              <option>Women's Strawweight</option>
+              <option>Women's Flyweight</option>
+              <option>Women's Bantamweight</option>
+              <option>Women's Featherweight</option>
+              <option>Catch Weight</option>
+            </select>
+          </div>
+
+          <div class="mb-grid2">
+            <div>
+              <div class="mb-lbl">ML Odds A</div>
+              <input class="mb-inp" id="mb-ml-a" placeholder="-150" autocomplete="off">
+            </div>
+            <div>
+              <div class="mb-lbl">ML Odds B</div>
+              <input class="mb-inp" id="mb-ml-b" placeholder="+130" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="mb-grid3">
+            <div>
+              <div class="mb-lbl">Round Total</div>
+              <input class="mb-inp" id="mb-round-total" placeholder="2.5" autocomplete="off">
+            </div>
+            <div>
+              <div class="mb-lbl">Over Odds</div>
+              <input class="mb-inp" id="mb-over-odds" placeholder="-120" autocomplete="off">
+            </div>
+            <div>
+              <div class="mb-lbl">Under Odds</div>
+              <input class="mb-inp" id="mb-under-odds" placeholder="+100" autocomplete="off">
+            </div>
+          </div>
+
+          <button class="btn-model" onclick="mbCalculate()">⚡ Calculate</button>
+        </div>
+
+        <div id="mb-results"></div>
+      </div>
+
+      <!-- Right: sig strike settings (always visible) -->
+      <div>
+        <div class="card" style="position:sticky;top:20px">
+          <h2 class="h-model">Sig Strike Settings</h2>
+
+          <div style="margin-bottom:10px">
+            <div class="mb-lbl">Line A</div>
+            <input class="mb-inp-sm" id="mb-line-a" placeholder="e.g. 54.5" autocomplete="off">
+          </div>
+          <div style="margin-bottom:10px">
+            <div class="mb-lbl">Line B</div>
+            <input class="mb-inp-sm" id="mb-line-b" placeholder="e.g. 42.5" autocomplete="off">
+          </div>
+          <div style="margin-bottom:10px">
+            <div class="mb-lbl-dim">Exp Mins Override</div>
+            <input class="mb-inp-sm" id="mb-exp-mins" placeholder="auto" autocomplete="off">
+          </div>
+
+          <div style="border-top:1px solid #2a2a2a;margin:12px 0 10px"></div>
+          <div style="font-size:0.7rem;color:#555;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Advanced</div>
+
+          <div class="mb-grid2" style="margin-bottom:8px">
+            <div>
+              <div class="mb-lbl-dim">Phi</div>
+              <input class="mb-inp-sm" id="mb-phi" value="1.8" autocomplete="off">
+            </div>
+            <div>
+              <div class="mb-lbl-dim">Sigma Floor</div>
+              <input class="mb-inp-sm" id="mb-sigma-floor" value="10" autocomplete="off">
+            </div>
+          </div>
+          <div class="mb-grid2" style="margin-bottom:8px">
+            <div>
+              <div class="mb-lbl-dim">Rho</div>
+              <input class="mb-inp-sm" id="mb-rho" value="-0.35" autocomplete="off">
+            </div>
+            <div>
+              <div class="mb-lbl-dim">k Grap Own</div>
+              <input class="mb-inp-sm" id="mb-k-grap-own" value="0.2" autocomplete="off">
+            </div>
+          </div>
+          <div style="margin-bottom:4px">
+            <div class="mb-lbl-dim">k Grap Opp</div>
+            <input class="mb-inp-sm" id="mb-k-grap-opp" value="0.5" autocomplete="off">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /panel-model -->
+
 <script src="js/utils.js"></script>
 <script src="Tabs/PropLines/props.js"></script>
 <script src="Tabs/FantasyPoints/fp.js"></script>
 <script src="Tabs/MethodRound/mr.js"></script>
 <script src="Tabs/OJScraper/oj-scraper.js"></script>
 <script src="Tabs/SigStrike/sig-strike.js"></script>
+<script src="Tabs/UFCModel/model.js"></script>
+<script src="Tabs/UFCModel/card-props.js"></script>
+<script src="Tabs/UFCModel/matchup.js"></script>
 <script src="js/main.js"></script>
 
 </body>
