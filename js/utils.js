@@ -29,6 +29,8 @@ function colIndex(headers, candidates) {
 }
 
 function loadFighters(text) {
+  // Strip BOM so Excel-exported CSVs don't break the first header
+  text = text.replace(/^﻿/, '');
   var rows = parseCSV(text);
   if (rows.length < 2) return null;
   var hdr    = rows[0];

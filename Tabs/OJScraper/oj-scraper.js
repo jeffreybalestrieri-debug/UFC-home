@@ -41,8 +41,17 @@ function handleOjAppearFile(e) {
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    const list = loadFighters(ev.target.result);
-    if (!list)        { setMsg('oj-appear-msg', 'error', 'Could not find player_name or appearance_id columns.'); return; }
+    const text = ev.target.result;
+    const list = loadFighters(text);
+    if (!list) {
+      // Show the actual column names found to help diagnose
+      const rows = parseCSV(text.replace(/^﻿/, ''));
+      const found = rows.length ? rows[0].join(', ') : '(empty file)';
+      setMsg('oj-appear-msg', 'error',
+        'Could not find <code>player_name</code> and <code>appearance_id</code> columns.<br>' +
+        '<span style="color:#666;font-size:0.75rem">Columns found: ' + escHtml(found) + '</span>');
+      return;
+    }
     if (!list.length) { setMsg('oj-appear-msg', 'error', 'No fighter rows found.'); return; }
     ojFighters = list;
     setMsg('oj-appear-msg', 'success', '✅ Loaded ' + ojFighters.length + ' fighters.');
