@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Read(//usr/local/bin/**)",
+      "Read(//Users/masondugas/.nvm/versions/**)",
+      "Bash(python3 -c \"import flask\")",
+      "Bash(python3 -c \"import http.server, cgi, json, subprocess, tempfile, os\")",
+      "Bash(python3 -c \"import http.server, json, subprocess, tempfile, os, urllib.parse; print\\('ok'\\)\")",
+      "Bash(python3 -m pip install flask)",
+      "Bash(python3 -c \"import flask, json, os, subprocess, tempfile, time, pathlib; print\\('all imports ok'\\)\")"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# Route /api/odds-proxy to the serverless function
+[[redirects]]
+  from   = "/api/odds-proxy"
+  to     = "/.netlify/functions/odds-proxy"
+  status = 200
