@@ -414,3 +414,17 @@ async function loadModelSheet(gid) {
   var text = await res.text();
   return parseCSVtoObjects(text);
 }
+
+// ── Tab entry points (called from main.js) ──
+
+function initModelTab() {
+  if (!cpSheets) cpLoad();
+  mbLoad();
+}
+
+function switchModelTab(sub) {
+  document.getElementById('model-panel-cp').style.display = sub === 'cp' ? 'block' : 'none';
+  document.getElementById('model-panel-mb').style.display = sub === 'mb' ? 'block' : 'none';
+  document.getElementById('msub-cp').className = 'model-sub-tab' + (sub === 'cp' ? ' active' : '');
+  document.getElementById('msub-mb').className = 'model-sub-tab' + (sub === 'mb' ? ' active' : '');
+}
