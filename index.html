@@ -18,7 +18,8 @@ h1{text-align:center;font-size:1.5rem;color:#e8c04a;margin-bottom:4px;letter-spa
 .tab.active-mr{background:#f97316;color:#000}
 .tab.active-model{background:#22d3ee;color:#000}
 .tab.active-oj{background:#2dd4bf;color:#000}
-.tab:hover:not(.active-props):not(.active-fp):not(.active-mr):not(.active-model):not(.active-oj){background:#222;color:#aaa}
+.tab.active-ss{background:#f43f5e;color:#000}
+.tab:hover:not(.active-props):not(.active-fp):not(.active-mr):not(.active-model):not(.active-oj):not(.active-ss){background:#222;color:#aaa}
 .panel{display:none}
 .panel.active{display:block}
 
@@ -29,6 +30,13 @@ h1{text-align:center;font-size:1.5rem;color:#e8c04a;margin-bottom:4px;letter-spa
 .h-fp{color:#c084fc}
 .h-mr{color:#f97316}
 .h-oj{color:#2dd4bf}
+.h-ss{color:#f43f5e}
+.btn-ss{background:#f43f5e;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;width:100%;margin-top:10px;transition:background 0.2s}
+.btn-ss:hover{background:#e02d4b}
+.export-btn-ss{background:#f43f5e;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;margin-top:12px;width:100%;transition:background 0.2s}
+.export-btn-ss:hover{background:#e02d4b}
+.file-label-ss{display:block;background:#333;color:#ccc;border:1px dashed #555;border-radius:6px;padding:12px;text-align:center;cursor:pointer;font-size:0.82rem;margin-top:4px;transition:all 0.2s}
+.file-label-ss:hover{border-color:#f43f5e;color:#f43f5e}
 .btn-oj{background:#2dd4bf;color:#000;border:none;padding:10px 24px;border-radius:6px;font-weight:bold;font-size:0.9rem;cursor:pointer;width:100%;margin-top:10px;transition:background 0.2s}
 .btn-oj:hover{background:#22b8a4}
 .btn-oj:disabled{background:#1a6b61;color:#555;cursor:not-allowed}
@@ -125,6 +133,7 @@ tr:hover td{background:#1f1f1f}
   <button class="tab" id="tab-fp" onclick="switchTab('fp')">🏆 Fantasy Points</button>
   <button class="tab" id="tab-mr" onclick="switchTab('mr')">🎯 Method &amp; Round</button>
   <button class="tab" id="tab-oj" onclick="switchTab('oj')">🔎 OJ Scraper</button>
+  <button class="tab" id="tab-ss" onclick="switchTab('ss')">🎯 Sig Strike Alts</button>
 </div>
 
 <!-- ════════════════════════════════════════════════ -->
@@ -451,11 +460,57 @@ Mike Malott Submission &amp; Round 1
 
 </div><!-- /panel-oj -->
 
+<!-- ════════════════════════════════════════════════ -->
+<!--  PANEL: SIG STRIKE ALTS                          -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="panel" id="panel-ss">
+
+  <!-- Step 1: Markets CSV -->
+  <div class="card">
+    <h2 class="h-ss">Step 1 — Upload Markets CSV</h2>
+    <input type="file" id="ss-markets-file" accept=".csv" style="display:none" onchange="handleSsMarketsFile(event)">
+    <label for="ss-markets-file" class="file-label-ss">📂 Click to upload your Markets CSV</label>
+    <div class="hint">Needs columns: <code>Player.Name</code>, <code>Appearance.Id</code>, <code>Line.value</code>. Rows are auto-filtered to Significant Strikes + active + balanced.</div>
+    <div id="ss-upload-msg"></div>
+  </div>
+
+  <!-- Run -->
+  <div class="card">
+    <button class="btn-ss" onclick="runSigStrike()">🎯 Generate Alts</button>
+    <div id="ss-run-msg"></div>
+  </div>
+
+  <!-- Results -->
+  <div class="card" id="ss-results-card" style="display:none">
+    <h2 class="h-ss">📊 Results</h2>
+    <div class="summary" id="ss-summary"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="color:#aaa">Fighter</th>
+            <th style="color:#aaa">App ID</th>
+            <th style="color:#f43f5e">Line</th>
+            <th style="color:#aaa;text-align:center">Alt</th>
+            <th style="color:#aaa;text-align:center">Replacement</th>
+            <th style="color:#aaa">Over Odds</th>
+            <th style="color:#aaa">Under Odds</th>
+          </tr>
+        </thead>
+        <tbody id="ss-result-tbody"></tbody>
+      </table>
+    </div>
+    <button class="export-btn-ss" onclick="exportSsCSV()">⬇ Download ss_alt_upload.csv</button>
+  </div>
+
+</div><!-- /panel-ss -->
+
 <script src="js/utils.js"></script>
 <script src="Tabs/PropLines/props.js"></script>
 <script src="Tabs/FantasyPoints/fp.js"></script>
 <script src="Tabs/MethodRound/mr.js"></script>
 <script src="Tabs/OJScraper/oj-scraper.js"></script>
+<script src="Tabs/SigStrike/sig-strike.js"></script>
 <script src="js/main.js"></script>
 
 </body>
