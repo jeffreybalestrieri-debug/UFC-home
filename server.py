@@ -5,15 +5,15 @@ browser can call /api/odds-proxy without CORS issues. Not needed in production
 
 import json
 from pathlib import Path
-from urllib import request as urllib_request
 from urllib.parse import urlencode
 
+import requests
 from flask import Flask, jsonify, request, send_from_directory
 
 BASE_DIR = Path(__file__).parent.resolve()
 KEY = "e69544ed-dadf-4260-9024-e83adfad1491"
 
-app = Flask(__name__, static_folder=str(BASE_DIR))
+app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path='')
 
 
 @app.route("/")
@@ -35,10 +35,9 @@ def odds_proxy():
     if params:
         url += "?" + urlencode(params)
 
-    req = urllib_request.Request(url, headers={"X-Api-Key": KEY, "Accept": "application/json"})
     try:
-        with urllib_request.urlopen(req, timeout=30) as resp:
-            return resp.read(), 200, {"Content-Type": "application/json"}
+        resp = requests.get(url, headers={"X-Api-Key": KEY, "Accept": "application/json"}, timeout=30)
+        return resp.content, resp.status_code, {"Content-Type": "application/json"}
     except Exception as e:
         return json.dumps({"error": str(e)}), 500, {"Content-Type": "application/json"}
 
