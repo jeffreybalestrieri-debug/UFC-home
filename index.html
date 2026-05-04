@@ -132,7 +132,6 @@ tr:hover td{background:#1f1f1f}
   <button class="tab active-props" id="tab-props" onclick="switchTab('props')">⚡ Prop Lines</button>
   <button class="tab" id="tab-fp" onclick="switchTab('fp')">🏆 Fantasy Points</button>
   <button class="tab" id="tab-mr" onclick="switchTab('mr')">🎯 Method &amp; Round</button>
-  <button class="tab" id="tab-oj" onclick="switchTab('oj')">🔎 OJ Scraper</button>
   <button class="tab" id="tab-ss" onclick="switchTab('ss')">🥊 Sig Strike Alts</button>
 </div>
 
@@ -376,89 +375,6 @@ Mike Malott Submission &amp; Round 1
 
 </div><!-- /panel-mr -->
 
-<!-- ════════════════════════════════════════════════ -->
-<!--  PANEL: OJ SCRAPER                               -->
-<!-- ════════════════════════════════════════════════ -->
-<div class="panel" id="panel-oj">
-
-  <!-- Server warning (shown when not running via node server.js) -->
-  <div id="oj-server-warn" style="display:none">
-    <div class="card">
-      <h2 class="h-oj">⚠ Server Not Running</h2>
-      <div class="server-warn-box" style="margin-top:12px">
-        <strong style="color:#f0f0f0">Deployed on Netlify?</strong> — no server needed, it just works.<br><br>
-        <strong style="color:#f0f0f0">Running locally?</strong> Start the proxy server in your terminal:<br>
-        <code>cd "/Users/masondugas/Desktop/UFC Homebase"</code><br>
-        <code>python3 server.py</code><br>
-        Then open <code>http://localhost:3001</code> instead of the file directly.
-      </div>
-      <button class="btn-oj" style="margin-top:4px" onclick="initOjTab()">🔄 Retry Connection</button>
-    </div>
-  </div>
-
-  <!-- Step 1: Configure -->
-  <div class="card">
-    <h2 class="h-oj">Step 1 — Configure Scrape</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:12px">
-
-      <div>
-        <div style="font-size:0.7rem;color:#2dd4bf;margin-bottom:6px">Fight Date</div>
-        <input type="date" id="oj-date" oninput="onOjDateChange()"
-          style="background:#111;border:1px solid #333;border-radius:5px;color:#f0f0f0;padding:7px 10px;font-size:0.85rem;width:100%">
-        <div id="oj-date-2-display" style="font-size:0.72rem;color:#555;margin-top:5px"></div>
-      </div>
-
-      <div>
-        <div style="font-size:0.7rem;color:#2dd4bf;margin-bottom:6px">Sportsbook</div>
-        <select id="oj-sportsbook"
-          style="background:#111;border:1px solid #333;border-radius:5px;color:#f0f0f0;padding:7px 10px;font-size:0.85rem;width:100%">
-          <option value="">— select —</option>
-          <option value="betonline">BetOnline</option>
-          <option value="fanduel">FanDuel</option>
-          <option value="draftkings">DraftKings</option>
-        </select>
-      </div>
-
-      <div>
-        <div style="font-size:0.7rem;color:#2dd4bf;margin-bottom:6px">Markets</div>
-        <label class="mkt-label"><input type="checkbox" class="oj-market" value="mov" checked> Method of Victory</label>
-        <label class="mkt-label"><input type="checkbox" class="oj-market" value="rounds" checked> Round Betting</label>
-        <label class="mkt-label"><input type="checkbox" class="oj-market" value="fight_time" checked> Fight Time</label>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Step 2: Appearance CSV -->
-  <div class="card">
-    <h2 class="h-oj">Step 2 — Upload Appearance IDs CSV</h2>
-    <input type="file" id="oj-appear-file" accept=".csv" style="display:none" onchange="handleOjAppearFile(event)">
-    <label for="oj-appear-file" class="file-label-oj">📂 Click to upload your Appearance CSV</label>
-    <div class="hint">Needs columns: <code>player_name</code>, <code>appearance_id</code>.</div>
-    <div id="oj-appear-msg"></div>
-  </div>
-
-  <!-- Run -->
-  <div class="card">
-    <button class="btn-oj" id="oj-run-btn" onclick="runOjScraper()">🔎 Run Scraper</button>
-    <div class="oj-spinner" id="oj-spinner">⏳ Running R scraper… may take 30–60 seconds</div>
-    <div id="oj-run-msg"></div>
-  </div>
-
-  <!-- Results -->
-  <div class="card" id="oj-results-card" style="display:none">
-    <h2 class="h-oj">📊 Scrape Results</h2>
-    <div class="summary" id="oj-summary"></div>
-    <div class="tbl-wrap">
-      <table>
-        <thead id="oj-result-thead"></thead>
-        <tbody id="oj-result-tbody"></tbody>
-      </table>
-    </div>
-    <button class="export-btn-oj" onclick="exportOjCSV()">⬇ Download bulk_upload.csv</button>
-  </div>
-
-</div><!-- /panel-oj -->
 
 <!-- ════════════════════════════════════════════════ -->
 <!--  PANEL: SIG STRIKE ALTS                          -->
@@ -509,7 +425,7 @@ Mike Malott Submission &amp; Round 1
 <script src="Tabs/PropLines/props.js"></script>
 <script src="Tabs/FantasyPoints/fp.js"></script>
 <script src="Tabs/MethodRound/mr.js"></script>
-<script src="Tabs/OJScraper/oj-scraper.js"></script>
+
 <script src="Tabs/SigStrike/sig-strike.js"></script>
 <script src="js/main.js"></script>
 
