@@ -26,7 +26,10 @@ function probToAmerican(p) {
 function singleSideDevig(odds) {
   var implied = americanToProb(odds);
   var fair = implied / (1 + MR_VIG);
-  return { fairPct: fair, fairOdds: probToAmerican(fair) };
+  var fairOdds = probToAmerican(fair);
+  // Cap at decimal odds 55.55 → American +5455
+  if (fairOdds !== null && fairOdds > 5455) fairOdds = 5455;
+  return { fairPct: fair, fairOdds: fairOdds };
 }
 
 function findAppearanceId(fighterName) {
@@ -113,13 +116,23 @@ function handleMRAppearFile(e) {
   reader.readAsText(file);
 }
 
+function mrSelectFighter(idx, selectEl) {
+  var selectedId = selectEl.value;
+  if (!selectedId) return;
+  var fighterName = mrResults[idx].fighter;
+  mrResults.forEach(function(r) {
+    if (r.fighter === fighterName) r.appearance_id = selectedId;
+  });
+  renderMRTable();
+}
+
 function renderMRTable() {
   var tbody = document.getElementById('mr-tbody');
   tbody.innerHTML = '';
   var lastFighter = null;
   var noId = [];
 
-  mrResults.forEach(function(r) {
+  mrResults.forEach(function(r, idx) {
     if (r.fighter !== lastFighter) {
       lastFighter = r.fighter;
       var sep = document.createElement('tr');
@@ -127,6 +140,20 @@ function renderMRTable() {
       tbody.appendChild(sep);
     }
     if (!r.appearance_id) noId.push(r.fighter);
+
+    var idCell;
+    if (r.appearance_id) {
+      idCell = '<span class="uuid-ok">✓ ' + escHtml(r.appearance_id.substring(0,8)) + '…</span>';
+    } else if (mrFighters.length > 0) {
+      var opts = '<option value="">— match name —</option>';
+      mrFighters.forEach(function(f) {
+        opts += '<option value="' + escHtml(f.appearance_id) + '">' + escHtml(f.name) + '</option>';
+      });
+      idCell = '<select onchange="mrSelectFighter(' + idx + ',this)" style="background:#1a1a1a;color:#f97316;border:1px solid #555;border-radius:4px;padding:2px 4px;font-size:0.72rem;max-width:160px">' + opts + '</select>';
+    } else {
+      idCell = '<span class="uuid-miss">—</span>';
+    }
+
     var tr = document.createElement('tr');
     tr.innerHTML =
       '<td class="fighter-name">' + escHtml(r.fighter) + '</td>' +
@@ -136,9 +163,7 @@ function renderMRTable() {
       '<td style="color:#888">' + (r.impliedPct*100).toFixed(2) + '%</td>' +
       '<td class="fair-odds">' + (r.fairPct*100).toFixed(2) + '%</td>' +
       '<td class="fair-odds">' + (r.fairOdds !== null ? fmtOdds(r.fairOdds) : '—') + '</td>' +
-      '<td>' + (r.appearance_id
-        ? '<span class="uuid-ok">✓ ' + escHtml(r.appearance_id.substring(0,8)) + '…</span>'
-        : '<span class="uuid-miss">—</span>') + '</td>';
+      '<td>' + idCell + '</td>';
     tbody.appendChild(tr);
   });
 
